@@ -1,17 +1,27 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions
+from apps.sheets.sheets import append_row
 
 from .adapters.rightmove import RightmoveAdapter
-from apps.sheets.sheets import append_row
 from .models import ProviderConfig
 from .serializers import ProviderConfigSerializer
 
 
 class ScrapeView(APIView):
+    """API view to scrape property data from a given URL and append it to Google Sheets."""
+
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
+        """Handle POST requests to scrape property data from the provided URL.
+
+        Args:
+            request: The HTTP request object containing the 'url' in the body.
+
+        Returns:
+            Response: A JSON response with the scraped data or an error message.
+        """
         url = request.data.get("url")
         if not url:
             return Response(
@@ -36,6 +46,8 @@ class ScrapeView(APIView):
 
 
 class ProviderConfigViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing ProviderConfig objects."""
+
     permission_classes = [permissions.IsAdminUser]
     queryset = ProviderConfig.objects.all()
     serializer_class = ProviderConfigSerializer
