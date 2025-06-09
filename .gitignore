@@ -64,9 +64,3 @@ staticfiles/
 # OS files
 .DS_Store
 Thumbs.db
-
-# Pipenv
-Pipfile.lock
-
-# Ignore Jenkins workspace files
-*.jenkins
