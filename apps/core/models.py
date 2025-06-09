@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ProviderConfig(models.Model):
     # Explicit manager to satisfy linters and provide query interface
     objects = models.Manager()

@@ -13,6 +13,7 @@ requests = "*"
 beautifulsoup4 = "*"
 google-auth = "*"
 google-api-python-client = "*"
+black = "*"
 
 [dev-packages]
 pytest = "*"
