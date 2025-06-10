@@ -19,6 +19,7 @@ black = "*"
 [dev-packages]
 pytest = "*"
 pytest-django = "*"
+pytest-cov = "*"
 flake8 = "*"
 isort = "*"
 coverage = "*"
