@@ -46,7 +46,7 @@ class ScrapeView(APIView):
                     data.get("service_charge"),
                 ]
             )
-            return Response(data, status=status.HTTP_201_CREATED)
+            return Response(data, status=status.HTTP_200_OK)
         except ValueError as exc:
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as exc:

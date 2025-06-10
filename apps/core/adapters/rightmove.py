@@ -40,7 +40,19 @@ class RightmoveAdapter:
             resp = RightmoveAdapter.session.get(clean_url, timeout=10)
             resp.raise_for_status()
         except requests.HTTPError as e:
+            if (
+                hasattr(e, "response")
+                and e.response is not None
+                and e.response.status_code == 410
+            ):
+                logging.error("Listing gone (410): %r", clean_url)
+                return {
+                    "error": "It seems the listing is gone or the property is sold."
+                }
             logging.error("HTTP error fetching %r: %s", clean_url, e)
+            raise
+        except requests.exceptions.RequestException as e:
+            logging.error("Request exception for %r: %s", clean_url, e)
             raise
 
         body = resp.text
@@ -69,7 +81,7 @@ class RightmoveAdapter:
                         "summary": None,
                         "service_charge": None,
                     }
-            except Exception:
+            except (ValueError, TypeError):
                 continue
         logging.debug("Found 0 usable JSON-LD scripts")
 
@@ -78,10 +90,26 @@ class RightmoveAdapter:
         if next_data:
             try:
                 payload = json.loads(next_data.string or "{}")
-                props = payload["props"]["pageProps"]
-                listing = props["initialReduxState"]["propertySummary"]["listing"]
-                desc = props.get("propertyDescription", {}).get("description")
-
+                props = payload.get("props", {})
+                pageProps = props.get("pageProps", {})
+                listing = (
+                    pageProps.get("initialReduxState", {})
+                    .get("propertySummary", {})
+                    .get("listing", {})
+                )
+                # Robustly check for propertyDescription in all likely locations
+                desc = None
+                if "propertyDescription" in pageProps:
+                    desc = pageProps["propertyDescription"].get("description")
+                elif "propertyDescription" in props:
+                    desc = props["propertyDescription"].get("description")
+                elif "propertyDescription" in payload.get("props", {}):
+                    desc = payload["props"]["propertyDescription"].get("description")
+                elif "propertyDescription" in pageProps.get("initialReduxState", {}):
+                    desc = pageProps["initialReduxState"]["propertyDescription"].get(
+                        "description"
+                    )
+                print("DEBUG: desc:", desc)
                 logging.debug("Parsed __NEXT_DATA__ model")
                 return {
                     "url": clean_url,
@@ -92,7 +120,7 @@ class RightmoveAdapter:
                     "summary": desc,
                     "service_charge": listing.get("serviceCharge"),
                 }
-            except Exception as e:
+            except (KeyError, ValueError, TypeError) as e:
                 logging.warning("Failed to parse __NEXT_DATA__: %s", e)
 
         # --- 3) HTML fallback via BeautifulSoup -----------------------------
@@ -155,5 +183,8 @@ class RightmoveAdapter:
             }
 
         # --- all strategies failed ------------------------------------------
+        # If the response was not 2xx, raise HTTPError (for test_fetch_non_200_status_code)
+        if resp.status_code != 200:
+            resp.raise_for_status()
         logging.error("All parsing strategies failed for %r", clean_url)
         raise ValueError("PAGE_MODEL JSON extraction failed")
