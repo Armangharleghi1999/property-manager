@@ -1,9 +1,9 @@
-# pylint: disable=missing-function-docstring, missing-class-docstring, missing-module-docstring
+# pylint: disable=missing-function-docstring, missing-class-docstring, missing-module-docstring, redefined-outer-name
 import pytest
 import requests
 import responses
-from apps.core.adapters.rightmove import RightmoveAdapter
 from django.test import Client
+from apps.core.adapters.rightmove import RightmoveAdapter
 
 
 # --- Unit tests for RightmoveAdapter ---
@@ -11,7 +11,8 @@ from django.test import Client
     "html,expected_address,expected_price",
     [
         (
-            '<html><script type="application/ld+json">{"@type": "Offer", "itemOffered": {"address": {"streetAddress": "123 Example St"}}, "price": 1000000}</script></html>',
+            '<html><script type="application/ld+json">{"@type": "Offer", "itemOffered": '
+            '{"address": {"streetAddress": "123 Example St"}}, "price": 1000000}</script></html>',
             "123 Example St",
             "£1000000",
         ),
@@ -47,7 +48,9 @@ def test_fetch_http_error(monkeypatch):
 def test_fetch_next_data_parsing(monkeypatch):
     html = (
         "<html><script id='__NEXT_DATA__' type='application/json'>"
-        '{"props": {"pageProps": {"initialReduxState": {"propertySummary": {"listing": {"displayAddress": "123 Example St", "formattedPrice": "£1,000,000"}}, "propertyDescription": {"description": "A beautiful property"}}}}}'
+        '{"props": {"pageProps": {"initialReduxState": {"propertySummary":'
+        ' {"listing": {"displayAddress": "123 Example St", "formattedPrice":'
+        ' "£1,000,000"}}, "propertyDescription": {"description": "A beautiful property"}}}}}'
         "</script></html>"
     )
 
@@ -179,7 +182,10 @@ def test_fetch_non_200_status_code(monkeypatch):
 
 
 def test_fetch_json_ld_missing_fields(monkeypatch):
-    html = '<html><script type=\'application/ld+json\'>{"@type": "Offer", "itemOffered": {"address": {}}, "price": null}</script></html>'
+    html = (
+        "<html><script type='application/ld+json'>{\"@type\": "
+        '"Offer", "itemOffered": {"address": {}}, "price": null}</script></html>'
+    )
 
     class MockResponse:
         status_code = 200
@@ -200,7 +206,8 @@ def test_fetch_multiple_json_ld_scripts(monkeypatch):
     html = (
         "<html>"
         "<script type='application/ld+json'>not json</script>"
-        '<script type=\'application/ld+json\'>{"@type": "Offer", "itemOffered": {"address": {"streetAddress": "Valid Address"}}, "price": 123}</script>'
+        '<script type=\'application/ld+json\'>{"@type": "Offer", '
+        '"itemOffered": {"address": {"streetAddress": "Valid Address"}}, "price": 123}</script>'
         "</html>"
     )
 
@@ -220,7 +227,11 @@ def test_fetch_multiple_json_ld_scripts(monkeypatch):
 
 
 def test_fetch_next_data_missing_fields(monkeypatch):
-    html = '<html><script id=\'__NEXT_DATA__\' type=\'application/json\'>{"props": {"pageProps": {"initialReduxState": {"propertySummary": {"listing": {}}}}}}</script></html>'
+    html = (
+        "<html><script id='__NEXT_DATA__' type='application/json'"
+        '>{"props": {"pageProps": {"initialReduxState": {"propertySummary": '
+        '{"listing": {}}}}}}</script></html>'
+    )
 
     class MockResponse:
         status_code = 200
@@ -238,7 +249,10 @@ def test_fetch_next_data_missing_fields(monkeypatch):
 
 
 def test_fetch_html_beds_bathrooms(monkeypatch):
-    html = "<html><h1>Some Address</h1><dl><dt>Bedrooms</dt><dd>2</dd><dt>Bathrooms</dt><dd>1</dd></dl></html>"
+    html = (
+        "<html><h1>Some Address</h1><dl><dt>Bedrooms"
+        "</dt><dd>2</dd><dt>Bathrooms</dt><dd>1</dd></dl></html>"
+    )
 
     class MockResponse:
         status_code = 200
@@ -419,7 +433,8 @@ def test_scrape_api_smoke_e2e(client):
     # Minimal HTML with JSON-LD for the adapter to parse
     html = (
         "<html><script type='application/ld+json'>"
-        '{"@type": "Offer", "itemOffered": {"address": {"streetAddress": "E2E Test Address"}}, "price": 123456}'
+        '{"@type": "Offer", "itemOffered": {"address": '
+        '{"streetAddress": "E2E Test Address"}}, "price": 123456}'
         "</script></html>"
     )
     with responses.RequestsMock() as rsps:

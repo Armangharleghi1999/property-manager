@@ -98,22 +98,22 @@ class RightmoveAdapter:
             try:
                 payload = json.loads(next_data.string or "{}")
                 props = payload.get("props", {})
-                pageProps = props.get("pageProps", {})
+                page_props = props.get("pageProps", {})
                 listing = (
-                    pageProps.get("initialReduxState", {})
+                    page_props.get("initialReduxState", {})
                     .get("propertySummary", {})
                     .get("listing", {})
                 )
                 # Robustly check for propertyDescription in all likely locations
                 desc = None
-                if "propertyDescription" in pageProps:
-                    desc = pageProps["propertyDescription"].get("description")
+                if "propertyDescription" in page_props:
+                    desc = page_props["propertyDescription"].get("description")
                 elif "propertyDescription" in props:
                     desc = props["propertyDescription"].get("description")
                 elif "propertyDescription" in payload.get("props", {}):
                     desc = payload["props"]["propertyDescription"].get("description")
-                elif "propertyDescription" in pageProps.get("initialReduxState", {}):
-                    desc = pageProps["initialReduxState"]["propertyDescription"].get(
+                elif "propertyDescription" in page_props.get("initialReduxState", {}):
+                    desc = page_props["initialReduxState"]["propertyDescription"].get(
                         "description"
                     )
                 print("DEBUG: desc:", desc)

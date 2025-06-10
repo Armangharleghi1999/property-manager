@@ -1,4 +1,4 @@
-# pylint: disable=missing-function-docstring, missing-class-docstring, missing-module-docstring
+# pylint: disable=missing-function-docstring, missing-class-docstring, missing-module-docstring, redefined-outer-name
 import pytest
 from apps.core.adapters.rightmove import RightmoveAdapterError
 
@@ -15,7 +15,12 @@ def test_scrape_without_url(client):
 def adapter_monkeypatch(monkeypatch):
     # Patch the fetch method on the RightmoveAdapter as a staticmethod
     def fake_fetch(url):
-        return {"address": "stubbed", "price": "£123"}
+        return {
+            "address": "stubbed",
+            "price": "£123",
+            "url": url,
+            "service_charge": "£300",
+        }
 
     monkeypatch.setattr(
         "apps.core.adapters.rightmove.RightmoveAdapter.fetch", staticmethod(fake_fetch)
