@@ -1,3 +1,4 @@
+# pylint: disable=missing-function-docstring, missing-class-docstring, missing-module-docstring
 import re
 import json
 import logging
@@ -7,6 +8,12 @@ import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+
+
+class RightmoveAdapterError(Exception):
+    """Custom exception for unexpected RightmoveAdapter errors."""
+
+    pass
 
 
 class RightmoveAdapter:

@@ -1,4 +1,6 @@
+# pylint: disable=missing-function-docstring, missing-class-docstring, missing-module-docstring
 import pytest
+from apps.core.adapters.rightmove import RightmoveAdapterError
 
 
 @pytest.mark.django_db
@@ -48,9 +50,9 @@ def test_scrape_adapter_valueerror(monkeypatch, client):
 
 @pytest.mark.django_db
 def test_scrape_adapter_exception(monkeypatch, client):
-    # Simulate RightmoveAdapter.fetch raising a generic Exception
+    # Simulate RightmoveAdapter.fetch raising a custom RightmoveAdapterError
     def fake_fetch(url):
-        raise Exception("Something went wrong!")
+        raise RightmoveAdapterError("Something went wrong!")
 
     monkeypatch.setattr(
         "apps.core.adapters.rightmove.RightmoveAdapter.fetch", staticmethod(fake_fetch)

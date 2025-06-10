@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions
 from apps.sheets.sheets import append_row
 
-from .adapters.rightmove import RightmoveAdapter
+from .adapters.rightmove import RightmoveAdapter, RightmoveAdapterError
 from .models import ProviderConfig
 from .serializers import ProviderConfigSerializer
 
@@ -49,9 +49,14 @@ class ScrapeView(APIView):
             return Response(data, status=status.HTTP_200_OK)
         except ValueError as exc:
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as exc:
+        except (TypeError, KeyError, AttributeError) as exc:
             return Response(
-                {"error": "An unexpected error occurred: " + str(exc)},
+                {"error": f"A data error occurred: {exc}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except RightmoveAdapterError as exc:
+            return Response(
+                {"error": f"An unexpected error occurred: {exc}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 

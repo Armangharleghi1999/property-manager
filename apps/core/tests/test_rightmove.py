@@ -1,8 +1,9 @@
-import logging
+# pylint: disable=missing-function-docstring, missing-class-docstring, missing-module-docstring
 import pytest
-from apps.core.adapters.rightmove import RightmoveAdapter
 import requests
 import responses
+from apps.core.adapters.rightmove import RightmoveAdapter
+from django.test import Client
 
 
 # --- Unit tests for RightmoveAdapter ---
@@ -10,7 +11,7 @@ import responses
     "html,expected_address,expected_price",
     [
         (
-            '<html><script type=\'application/ld+json\'>{"@type": "Offer", "itemOffered": {"address": {"streetAddress": "123 Example St"}}, "price": 1000000}</script></html>',
+            '<html><script type="application/ld+json">{"@type": "Offer", "itemOffered": {"address": {"streetAddress": "123 Example St"}}, "price": 1000000}</script></html>',
             "123 Example St",
             "£1000000",
         ),
@@ -175,14 +176,6 @@ def test_fetch_non_200_status_code(monkeypatch):
     )
     with pytest.raises(requests.HTTPError):
         RightmoveAdapter.fetch("https://example.com")
-
-
-@pytest.mark.skip(
-    reason="Retry mechanism is handled by requests' adapter and is not directly testable with this mock setup."
-)
-def test_fetch_retry_mechanism(monkeypatch):
-    # Not directly testable with monkeypatch
-    pass
 
 
 def test_fetch_json_ld_missing_fields(monkeypatch):
@@ -380,7 +373,6 @@ def test_fetch_html_no_fields(monkeypatch):
 
 # --- API/View integration tests ---
 pytestmark = pytest.mark.django_db
-from django.test import Client
 
 
 @pytest.fixture
@@ -394,6 +386,7 @@ def test_rightmove_api_success(monkeypatch, client):
             "address": "123 Example St",
             "price": "£1000000",
             "summary": "A nice place",
+            "url": url,
         }
 
     monkeypatch.setattr(RightmoveAdapter, "fetch", mock_fetch)
@@ -402,6 +395,7 @@ def test_rightmove_api_success(monkeypatch, client):
     assert response.status_code in (200, 201)
     assert "address" in response.json()
     assert response.json()["address"] == "123 Example St"
+    assert response.json()["url"] == "https://example.com"
 
 
 def test_rightmove_api_error(monkeypatch, client):
