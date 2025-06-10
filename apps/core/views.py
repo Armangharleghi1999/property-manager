@@ -1,3 +1,11 @@
+"""
+Views for the core app of the Property Manager project.
+
+This file contains:
+- API views for scraping property data and appending it to Google Sheets
+- ViewSets for managing provider configurations
+"""
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions
@@ -13,7 +21,7 @@ class ScrapeView(APIView):
 
     permission_classes = [permissions.AllowAny]
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         """Handle POST requests to scrape property data from the provided URL.
 
         Args:
@@ -39,9 +47,14 @@ class ScrapeView(APIView):
                 ]
             )
             return Response(data, status=status.HTTP_201_CREATED)
+        except ValueError as exc:
+            return Response(
+                {"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as exc:
             return Response(
-                {"error": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"error": "An unexpected error occurred: " + str(exc)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 

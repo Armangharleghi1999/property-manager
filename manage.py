@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""
+This file is the entry point for Django's command-line utility for administrative tasks.
+Used for tasks such as running the development server, making migrations, and managing the database.
+"""
+
 import os
 import sys
 

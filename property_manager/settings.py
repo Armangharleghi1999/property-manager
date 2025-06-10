@@ -1,3 +1,13 @@
+"""
+Django settings for the Property Manager project.
+
+This file contains configurations for:
+- Database (default: SQLite for local development)
+- Installed apps, including Django REST Framework and Google Sheets integration
+- Middleware and templates
+- Environment variables for sensitive data
+"""
+
 import os
 from pathlib import Path
 
