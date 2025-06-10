@@ -48,9 +48,7 @@ class ScrapeView(APIView):
             )
             return Response(data, status=status.HTTP_201_CREATED)
         except ValueError as exc:
-            return Response(
-                {"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as exc:
             return Response(
                 {"error": "An unexpected error occurred: " + str(exc)},

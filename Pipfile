@@ -9,6 +9,7 @@ python_version = "3.13"
 [packages]
 django = "*"
 djangorestframework = "*"
+playwright = "*"
 requests = "*"
 beautifulsoup4 = "*"
 google-auth = "*"

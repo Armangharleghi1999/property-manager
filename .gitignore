@@ -63,4 +63,7 @@ staticfiles/
 
 # OS files
 .DS_Store
-Thumbs.db
+Thu1bs.db
+
+# scratch files
+scratch.py

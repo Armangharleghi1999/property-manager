@@ -96,3 +96,29 @@ REST_FRAMEWORK = {
 # Google Sheets integration
 GOOGLE_SHEETS_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 GOOGLE_SHEETS_SPREADSHEET_ID = os.getenv("GOOGLE_SHEETS_SPREADSHEET_ID")
+
+# Logging configuration
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "detailed",
+        },
+    },
+    "formatters": {
+        "detailed": {
+            "format": "%(asctime)s [%(levelname)s] %(message)s (%(pathname)s:%(lineno)d)",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG",
+    },
+    "django": {
+        "handlers": ["console"],
+        "level": "DEBUG",
+        "propagate": False,
+    },
+}
