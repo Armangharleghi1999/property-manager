@@ -94,7 +94,7 @@ A hobby project to learn end-to-end application development with Python, Django 
 
 ## To Do List
 
-- [ ] Implement real parsing in RightmoveAdapter using BeautifulSoup selectors.
+- [x] Implement real parsing in RightmoveAdapter using BeautifulSoup selectors.
 - [ ] Hook up Google Sheets API in apps/sheets/sheets.py.
 - [ ] Migrate database from SQLite to MySQL.
 - [ ] Introduce async task queue (Celery/RQ) and retry logic.
