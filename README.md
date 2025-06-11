@@ -76,10 +76,13 @@ A hobby project to learn end-to-end application development with Python, Django 
    **Response**
    ```json
    {
-       "url": "https://www.rightmove.co.uk/property-for-sale/example-1234",
-       "address": "123 Example Street, London",
-       "price": "£1,000,000",
-       "service_charge": "£200"
+      "url": "https://www.rightmove.co.uk/properties/123456",
+      "address": "Jahanam Dare, London, E6",
+      "price": "£425,000",
+      "beds": "2",
+      "bathrooms": "2",
+      "summary": "2 bedroom flat for sale in Jahanam Dare, London, E6 - Rightmove.",
+      "service_charge": "£2,134"
    }
    ```
 
@@ -89,6 +92,19 @@ A hobby project to learn end-to-end application development with Python, Django 
    pytest --maxfail=1 --disable-warnings -q
    flake8 .
    ```
+
+   Or use the provided scripts for full test and coverage runs:
+
+   - On Windows:
+     ```cmd
+     scripts\run_all_unittests.bat
+     ```
+   - On Linux/macOS:
+     ```bash
+     ./scripts/run_all_unittests.sh
+     ```
+
+   These scripts run all unit tests with coverage reporting and are the recommended way to check code quality before commits.
 
 ---
 
