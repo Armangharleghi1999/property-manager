@@ -13,7 +13,12 @@ from urllib3.util.retry import Retry
 class RightmoveAdapterError(Exception):
     """Custom exception for unexpected RightmoveAdapter errors."""
 
-    pass
+    def __init__(self, message: str, *args):
+        super().__init__(message, *args)
+        self.message = message
+
+    def __str__(self):
+        return f"RightmoveAdapterError: {self.message}"
 
 
 class RightmoveAdapter:

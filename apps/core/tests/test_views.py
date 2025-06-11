@@ -22,13 +22,15 @@ def adapter_monkeypatch(monkeypatch):
             "service_charge": "£300",
         }
 
-    monkeypatch.setattr(
+    monkeypatch.setattr(  # pylint: disable=unused-argument
         "apps.core.adapters.rightmove.RightmoveAdapter.fetch", staticmethod(fake_fetch)
     )
 
 
 @pytest.mark.django_db
-def test_scrape_with_stub(adapter_monkeypatch, client):
+def test_scrape_with_stub(
+    adapter_monkeypatch, client
+):  # pylint: disable=unused-argument
     response = client.post("/api/scrape/", data={"url": "https://example.com"})
     if response.status_code != 200:
         print("DEBUG: Response status:", response.status_code)
