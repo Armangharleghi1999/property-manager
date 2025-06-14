@@ -15,7 +15,6 @@ bin/
 lib/
 lib64/
 include/
-Scripts/
 
 # Installer logs
 pip-log.txt
